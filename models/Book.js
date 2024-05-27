@@ -22,6 +22,18 @@ const Book = {
     const values = books.map(book => [book.title, book.author, book.publishedDate, book.price, sellerId]);
     connection.query(sql, [values], callback);
   },
+  findAll: () => {
+    return new Promise((resolve, reject) => {
+      const sql = 'SELECT * FROM books';
+      connection.query(sql, (err, results) => {
+        if (err) {
+          reject(err);
+        } else {
+          resolve(results);
+        }
+      });
+    });
+  },
   findAllBySellerId: (sellerId, callback) => {
     const sql = 'SELECT * FROM books WHERE sellerId = ?';
     connection.query(sql, [sellerId], callback);

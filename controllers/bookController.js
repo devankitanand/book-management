@@ -1,6 +1,16 @@
 const Book = require('../models/Book');
 const csvParser = require('../utils/csvParser');
 
+const getAllBooks = async (req, res) => {
+  try {
+    const books = await Book.findAll();
+    res.status(200).send(books);
+  } catch (err) {
+    console.error(err);
+    res.status(500).send(err);
+  }
+};
+
 
 const addBooks = async (req, res) => {
   const { userId } = req;
@@ -82,14 +92,6 @@ const deleteBook = async (req, res) => {
   }
 };
 
-const getAllBooks = async (req, res) => {
-  try {
-    const books = await Book.findAll();
-    res.status(200).send(books);
-  } catch (err) {
-    res.status(500).send(err);
-  }
-};
 
 const getBookById = async (req, res) => {
   const { bookId } = req.params;
