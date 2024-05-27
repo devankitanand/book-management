@@ -23,3 +23,4 @@ const Seller = {
 };
 
 module.exports = Seller;
+

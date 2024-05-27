@@ -1,12 +1,15 @@
+
+
 const connection = require('../config/db');
 
 const createBookTable = `CREATE TABLE IF NOT EXISTS books (
   id INT AUTO_INCREMENT PRIMARY KEY,
   title VARCHAR(255) NOT NULL,
   author VARCHAR(255) NOT NULL,
+  publishedDate DATE NOT NULL,
   price DECIMAL(10, 2) NOT NULL,
-  seller_id INT,
-  FOREIGN KEY (seller_id) REFERENCES sellers(id)
+  sellerId INT NOT NULL,
+  FOREIGN KEY (sellerId) REFERENCES sellers(id)
 )`;
 
 connection.query(createBookTable, (err) => {
@@ -14,30 +17,26 @@ connection.query(createBookTable, (err) => {
 });
 
 const Book = {
-  bulkCreate: (books, callback) => {
-    const sql = 'INSERT INTO books (title, author, price, seller_id) VALUES ?';
-    const values = books.map(book => [book.title, book.author, book.price, book.seller_id]);
+  bulkCreate: (books, sellerId, callback) => {
+    const sql = 'INSERT INTO books (title, author, publishedDate, price, sellerId) VALUES ?';
+    const values = books.map(book => [book.title, book.author, book.publishedDate, book.price, sellerId]);
     connection.query(sql, [values], callback);
   },
-  findBySellerId: (sellerId, callback) => {
-    const sql = 'SELECT * FROM books WHERE seller_id = ?';
+  findAllBySellerId: (sellerId, callback) => {
+    const sql = 'SELECT * FROM books WHERE sellerId = ?';
     connection.query(sql, [sellerId], callback);
   },
-  findAll: (callback) => {
-    const sql = 'SELECT * FROM books';
-    connection.query(sql, callback);
+  findByIdAndSellerId: (bookId, sellerId, callback) => {
+    const sql = 'SELECT * FROM books WHERE id = ? AND sellerId = ?';
+    connection.query(sql, [bookId, sellerId], callback);
   },
-  findById: (bookId, callback) => {
-    const sql = 'SELECT * FROM books WHERE id = ?';
-    connection.query(sql, [bookId], callback);
+  update: (bookId, sellerId, updatedBook, callback) => {
+    const sql = 'UPDATE books SET ? WHERE id = ? AND sellerId = ?';
+    connection.query(sql, [updatedBook, bookId, sellerId], callback);
   },
-  update: (bookId, updatedBook, callback) => {
-    const sql = 'UPDATE books SET ? WHERE id = ?';
-    connection.query(sql, [updatedBook, bookId], callback);
-  },
-  delete: (bookId, callback) => {
-    const sql = 'DELETE FROM books WHERE id = ?';
-    connection.query(sql, [bookId], callback);
+  delete: (bookId, sellerId, callback) => {
+    const sql = 'DELETE FROM books WHERE id = ? AND sellerId = ?';
+    connection.query(sql, [bookId, sellerId], callback);
   }
 };
 
