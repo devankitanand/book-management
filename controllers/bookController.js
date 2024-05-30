@@ -41,15 +41,23 @@ if (userRole !== 'seller') {
 };
 
 const getBooksBySeller = async (req, res) => {
-  const { userId } = req;
+  
+  const { userId, userRole } = req;
 
-  try {
-    const books = await Book.findBySellerId(userId);
-    res.status(200).send(books);
-  } catch (err) {
-    res.status(500).send(err);
+  if (userRole === 'seller') {
+    try {
+      const books = await Book.findAllBySellerId(userId);
+      res.status(200).send(books);
+    } catch (err) {
+      res.status(500).send({ message: 'Error retrieving books', error: err });
+    }
+  } else {
+    res.status(403).json({ message: "Not a seller" });
   }
 };
+
+
+
 
 const updateBook = async (req, res) => {
   const { userId } = req;
@@ -106,6 +114,7 @@ const getBookById = async (req, res) => {
     res.status(500).send(err);
   }
 };
+
 
 
 module.exports = {

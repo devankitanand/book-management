@@ -34,10 +34,34 @@ const Book = {
       });
     });
   },
-  findAllBySellerId: (sellerId, callback) => {
-    const sql = 'SELECT * FROM books WHERE sellerId = ?';
-    connection.query(sql, [sellerId], callback);
+  findAllBySellerId: (sellerId) => {
+    return new Promise((resolve,reject) => {
+      const sql = 'SELECT * FROM books WHERE sellerId = ?';
+      connection.query(sql,[sellerId],(err,results)=>{
+        if (err) {
+          reject(err);
+        } else {
+          resolve(results);
+        }
+      });
+
+    });
+    
   },
+  findById: (bookid) => {
+    return new Promise((resolve,reject)=>{
+      const sql = 'SELECT * FROM books WHERE id = ?';
+      connection.query(sql,[bookid],(err,results)=>{
+        if (err) {
+          reject(err);
+        } else {
+          resolve(results);
+        }
+      })
+    })
+  }
+  
+  ,
   findByIdAndSellerId: (bookId, sellerId, callback) => {
     const sql = 'SELECT * FROM books WHERE id = ? AND sellerId = ?';
     connection.query(sql, [bookId, sellerId], callback);
